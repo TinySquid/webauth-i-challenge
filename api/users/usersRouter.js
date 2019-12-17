@@ -2,7 +2,9 @@ const router = require('express').Router();
 
 const userDB = require('./usersModel');
 
-router.get("/", (req, res) => {
+const authenticator = require('../middleware/authenticator');
+
+router.get("/", authenticator, (req, res) => {
   userDB.get()
     .then(users => {
       if (users.length > 0) {
