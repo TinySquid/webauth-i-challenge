@@ -54,6 +54,14 @@ router.post("/login", validateUser, (req, res) => {
     });
 });
 
+router.post("/logout", (req, res) => {
+  if (req.session) {
+    req.session.destroy(err => {
+      err ? res.status(500).json({ message: "Error logging out" }) : res.status(200).json({ message: "Good bye!" });
+    });
+  }
+});
+
 //MIDDLEWARE
 function validateUser(req, res, next) {
   const { username, password } = req.body;
