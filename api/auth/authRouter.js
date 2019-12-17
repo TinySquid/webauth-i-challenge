@@ -4,6 +4,7 @@ const userDB = require('./authModel');
 
 const bcrypt = require('bcrypt');
 
+//* POST /register - Adds new user to database
 router.post("/register", validateUser, (req, res) => {
   const user = { username, password } = req.body;
 
@@ -25,6 +26,7 @@ router.post("/register", validateUser, (req, res) => {
     });
 });
 
+//* POST /login - Authenticates user credentials
 router.post("/login", validateUser, (req, res) => {
   const { username, password } = req.body;
 
@@ -34,7 +36,8 @@ router.post("/login", validateUser, (req, res) => {
         bcrypt.compare(password, user[0].password)
           .then(authenticated => {
             if (authenticated) {
-              res.status(200).json({ message: "Logged in" });
+              req.session.userId = user[0].id;
+              res.status(200).json({ message: "Logged in", userId: req.session.userId });
             } else {
               res.status(400).json({ message: "You shall not pass!" });
             }
@@ -47,8 +50,8 @@ router.post("/login", validateUser, (req, res) => {
       }
     })
     .catch(error => {
-      res.status(500).json({ message: "Could not get user from database" });
-    })
+      res.status(400).json({ message: "You shall not pass!", error: error });
+    });
 });
 
 //MIDDLEWARE
